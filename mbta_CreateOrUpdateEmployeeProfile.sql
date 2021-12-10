@@ -31,7 +31,7 @@ EmpExists OUT NUMBER
 AS
 BEGIN
     SELECT 1 INTO EmpExists FROM MBTA_EMPLOYEE WHERE EmployeeID = EmpId;
-    IF empExists > 0
+    IF EmpExists > 0
     THEN
         UPDATE MBTA_EMPLOYEE 
         SET 
