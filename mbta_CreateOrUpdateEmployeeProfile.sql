@@ -30,8 +30,8 @@ EmpExists OUT NUMBER
 )
 AS
 BEGIN
-    SELECT 1 INTO EmpExists FROM MBTA_EMPLOYEE WHERE EmployeeID = EmpId;
-    IF EmpExists > 0
+    SELECT COUNT(1) INTO EmpExists FROM MBTA_EMPLOYEE WHERE EmployeeID = EmpId;
+    IF NVL(EmpExists, 0) > 0
     THEN
         UPDATE MBTA_EMPLOYEE 
         SET 
