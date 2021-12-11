@@ -81,9 +81,17 @@ invalid_timeformat exception;
 trainid_count number;
 routeid_count number;
 scheduleid_fetch number;
+ CURSOR train_id_count_cursor
+    IS
+    select count(*) into trainid_count from mbta_traininfo where trainid=train_id;
+ CURSOR route_id_count_cursor
+    IS
+    select count(*) into routeid_count from mbta_routeinfo where routeid=route_id;
 begin
-select count(*) into trainid_count from mbta_traininfo where trainid=train_id;
-select count(*) into routeid_count from mbta_routeinfo where routeid=route_id;
+open train_id_count_cursor;
+open route_id_count_cursor;
+fetch train_id_count_cursor into trainid_count;
+fetch route_id_count_cursor into routeid_count;
 if(train_id is null) then
     raise null_exception_trainid;
 elsif(route_id is null) then
@@ -94,7 +102,7 @@ elsif(trainid_count=0)then
     raise invalid_trainid;
 elsif(routeid_count=0) then
     raise invalid_routeid;
-elsif(not regexp_like(train_time,'^.*:*.:.*$')) then
+elsif(check_date_format(train_time)=0) then
     raise invalid_timeformat;
 else
     select scheduleid into scheduleid_fetch from mbta_schedule where scheduleid in (select max(scheduleid) from mbta_schedule);
@@ -127,13 +135,12 @@ end if;
         invalid_timeformat
     then
         raise_application_error(-20000,'Invalid time format.Please enter in this format HH:MM:SS');
+close train_id_count_cursor;
 end;
 /
 
 
 call insert_schedule(2,3,'12:34:34');
-select scheduleid from mbta_schedule where scheduleid in (select max(scheduleid) from mbta_schedule);
-
 -- Null values
 call insert_schedule(null,3,'12:34:45 PM');
 
@@ -141,8 +148,8 @@ call insert_schedule(null,3,'12:34:45 PM');
 call insert_schedule(34,3,'12/34/54');
 
 
+-- Insert Train info
 
--- Get Schedule Of the Train
 
 
 
