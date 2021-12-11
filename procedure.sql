@@ -12,21 +12,20 @@ null_exception_latitude exception;
 null_exception_longitude exception;
 null_exception_trainid exception;
 train_idnotfound exception;
-v_count number;
+v_count number; 
 begin
 select count(*) into v_count from mbta_traininfo t1 where t1.trainid=intrainid;
 if(intrainid is null) then
-raise null_exception_trainid;
+    raise null_exception_trainid;
 elsif(v_count=0) then
-raise train_idnotfound;
+    raise train_idnotfound;
 elsif(latitude is null) then
-raise null_exception_latitude;
+    raise null_exception_latitude;
 elsif(longitude is null) then
-raise null_exception_longitude;
-
+    raise null_exception_longitude;
 else
-insert into mbta_traincurrentstatus values(seq_mbta_traincurrentstatus.nextval,latitude,longitude,intrainid);
-commit;
+    insert into mbta_traincurrentstatus values(seq_mbta_traincurrentstatus.nextval,latitude,longitude,intrainid);
+    commit;
 end if;
 /*   Exceptions    */
 
@@ -148,8 +147,84 @@ call insert_schedule(null,3,'12:34:45 PM');
 call insert_schedule(34,3,'12/34/54');
 
 
+
 -- Insert Train info
+Create or replace procedure insert_into_traininfo(
+year_ofmanufacturing mbta_traininfo.yearofmanufacturing%type,
+last_servicedate mbta_traininfo.lastservicedate%type,
+capacity mbta_traininfo.capacity%type,
+employeeid mbta_traininfo.employeeid%type
+)
+as
+next_trainid number;
+next_trainserialno number;
+validate_manu_service exception;
+null_exception_yearofmanufacturing exception;
+null_exception_lastservicedate exception;
+null_exception_capacity exception;
+null_exception_employeeid exception;
+invalid_employeeid exception;
+begin
+next_trainid:=next_trainid_traininfo;
+next_trainserialno:=next_trainserialno_traininfo;
+--check if service date is more than manufacturing date
+if(year_ofmanufacturing is null)then
+    raise null_exception_yearofmanufacturing;
+elsif(last_servicedate is null) then
+    raise null_exception_lastservicedate;
+elsif(capacity is null) then
+    raise null_exception_capacity;
+elsif(employeeid is null) then
+    raise null_exception_employeeid;
+else
+    if(check_service_manu(year_ofmanufacturing,last_servicedate)=1) then
+    if(check_employee_id(employeeid)=1) then
+        insert into mbta_traininfo values(next_trainid,next_trainserialno,year_ofmanufacturing,last_servicedate,capacity,employeeid);
+        commit;
+    else
+            raise invalid_employeeid;
+    end if;
+    else
+        raise validate_manu_service;
+    end if;
+end if;
+exception 
+    when validate_manu_service then
+    raise_application_error(-20000,'Check manufacturing date and service date. Service date should be greater than manufacturing date');
+    when null_exception_yearofmanufacturing then
+    raise_application_error(-20000,'Year of manufacturing cannot be null');
+    when null_exception_capacity  then
+    raise_application_error(-20000,'Capacity of train cannot be null or 0');
+    when null_exception_employeeid then
+    raise_application_error(-20000,'Employee ID cannot be null');
+    when null_exception_lastservicedate then
+    raise_application_error(-20000,'Last Service Date cannot be null');
+    when invalid_employeeid then
+    raise_application_error(-20001,'Invalid Employee Id');
+end;
+/
+
+
+
+call insert_into_traininfo(2020,'11-Sep-21',23,93);
+
+call insert_into_traininfo(2022,'11-Sep-21',23,93);
+
+call insert_into_traininfo(null,'11-Sep-21',23,93);
+
+call insert_into_traininfo(2022,null,23,93);
+
+call insert_into_traininfo(2022,'11-Sep-21',null,93);
+
+call insert_into_traininfo(2020,'11-Sep-21',23,null);
+
+call insert_into_traininfo(2020,'11-Sep-21',23,1999);
 
 
 
 
+
+
+
+
+select  from mbta_traininfo;
