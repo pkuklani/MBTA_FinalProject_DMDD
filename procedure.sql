@@ -3,7 +3,6 @@
 
 
 Create or replace Procedure insert_into_mbta_traincurrentstatus(
-TRAINCURRENTSTATUSID  mbta_traincurrentstatus.TRAINCURRENTSTATUSID%type,
 latitude mbta_traincurrentstatus.latitude%type,
 longitude mbta_traincurrentstatus.longitude%type,
 trainid mbta_traincurrentstatus.trainid%type)
@@ -36,7 +35,7 @@ Exception
 end; 
 /
 
-
-call insert_into_mbta_traincurrentstatus(null,'23.34',null,23);
+call insert_into_mbta_traincurrentstatus(23.34,34.54,23);
 
 select * from mbta_traincurrentstatus;
+
