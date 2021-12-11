@@ -8,10 +8,12 @@
 --SAMPLE USAGE:
     --TO UPDATE
         --DECLARE 
-        --GeneratedEmployeeID NUMBER;
-        --EmployeeExists NUMBER;
+        --GeneratedEmployeeID NUMBER :=0;
+        --EmployeeExists NUMBER :=0;
         --BEGIN
         --    mbta_createorupdateemployeeprofile (178, 'Zeus Duke', NULL, NULL, 'San Fransisco', NULL, 33203, NULL, GeneratedEmployeeID, EmployeeExists);
+        --    DBMS_OUTPUT.PUT_LINE(GeneratedEmployeeID);
+        --    DBMS_OUTPUT.PUT_LINE(EmployeeExists);
         --END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------

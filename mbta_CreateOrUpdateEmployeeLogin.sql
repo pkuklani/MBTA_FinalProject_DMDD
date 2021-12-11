@@ -1,7 +1,16 @@
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 --Description: Stored Procedure to Create or Update Employee Login. 
---Author: Priyanka Kuklani  
+--Author: Priyanka Kuklani 
+--SAMPLE USAGE:
+--      DECLARE 
+--          GeneratedEmployeeID NUMBER :=0;
+--          EmployeeExists NUMBER :=0;
+--      BEGIN
+--          mbta_CreateOrUpdateEmployeeLogin (200, 'user200', 'Pa$$w0rd.1', GeneratedEmployeeID, EmployeeExists);
+--          DBMS_OUTPUT.PUT_LINE(GeneratedEmployeeID);
+--          DBMS_OUTPUT.PUT_LINE(EmployeeExists);
+--      END;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 SET SERVEROUTPUT ON;
