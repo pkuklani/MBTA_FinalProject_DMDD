@@ -61,6 +61,8 @@ call insert_into_mbta_traincurrentstatus(23.34,null,500);
 
 
 /* Procedure to insert Scehdule of the train 
+
+Used max to get last schedule id not Sequence
 )*/
 
 
@@ -83,22 +85,22 @@ begin
 select count(*) into trainid_count from mbta_traininfo where trainid=train_id;
 select count(*) into routeid_count from mbta_routeinfo where routeid=route_id;
 if(train_id is null) then
-raise null_exception_trainid;
+    raise null_exception_trainid;
 elsif(route_id is null) then
-raise null_exception_routeid;
+    raise null_exception_routeid;
 elsif(train_time is null) then
-raise null_exception_traintime;
+    raise null_exception_traintime;
 elsif(trainid_count=0)then
-raise invalid_trainid;
+    raise invalid_trainid;
 elsif(routeid_count=0) then
-raise invalid_routeid;
+    raise invalid_routeid;
 elsif(not regexp_like(train_time,'^.*:*.:.*$')) then
-raise invalid_timeformat;
+    raise invalid_timeformat;
 else
-select scheduleid into scheduleid_fetch from mbta_schedule where scheduleid in (select max(scheduleid) from mbta_schedule);
-scheduleid_fetch:=+1;
-insert into mbta_schedule values(scheduleid_fetch,train_id,route_id,train_time);
-commit;
+    select scheduleid into scheduleid_fetch from mbta_schedule where scheduleid in (select max(scheduleid) from mbta_schedule);
+    scheduleid_fetch:=scheduleid_fetch+1;
+    insert into mbta_schedule values(scheduleid_fetch,train_id,route_id,train_time);
+    commit;
 end if;
  Exception
     when 
@@ -130,10 +132,17 @@ end;
 
 
 call insert_schedule(2,3,'12:34:34');
+select scheduleid from mbta_schedule where scheduleid in (select max(scheduleid) from mbta_schedule);
 
 -- Null values
-call insert_schedule(3,3,'12:53:34');
+call insert_schedule(null,3,'12:34:45 PM');
 
-SELECT traintime
-FROM mbta_schedule
-WHERE REGEXP_LIKE (traintime, '^.*:*.:.*$');
+-- Wrong Time Format
+call insert_schedule(34,3,'12/34/54');
+
+
+
+-- Get Schedule Of the Train
+
+
+
