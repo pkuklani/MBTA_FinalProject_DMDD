@@ -1,7 +1,6 @@
 /* Procedure to insert value in mbta train current status
 */
 
-
 Create or replace Procedure insert_into_mbta_traincurrentstatus(
 latitude mbta_traincurrentstatus.latitude%type,
 longitude mbta_traincurrentstatus.longitude%type,
@@ -222,15 +221,46 @@ call insert_into_traininfo(2020,'11-Sep-21',23,1999);
 
 
 
--- Check constraint - IN Keyword 
+-- Check constraint 
 Create or replace procedure insert_into_mbta_station(
-route_id mbta_route.RouteId%type,
+route_id mbta_routeinfo.routeid%type,
 station_name mbta_station.StationName%type,
 latitude mbta_station.latitude%type,
 longitude mbta_station.longitude%type,
 stationzipcode mbta_station.stationZipCode%type,
-stationstatus mbta_station.stationStation%type
+stationstatus mbta_station.status%type,
+stationseq mbta_station.stationseq%type,
+prevstationseq mbta_station.prevseq%type
 )
 as
+null_routeid exception;
+null_stationname exception;
+null_latitude exception;
+null_longitude exception;
+null_zipcode exception;
+null_stationstatus exception;
 begin
-insert into mbta_station values(seq_mbta_station.next,
+if(route_id is null)then
+raise null_routeid;
+elsif(station_name is null) then
+raise null_stationname;
+elsif(latitude is null)then
+raise null_latitude;
+elsif(longitude is null) then
+raise null_longitude;
+elsif(stationzipcode is null) then
+raise null_zipcode;
+elsif(stationstatus is null) then
+raise null_stationstatus;
+else
+insert into mbta_station values(seq_mbta_station.nextval,route_id,station_name,latitude,longitude,stationzipcode,stationstatus,stationseq,prevstationseq);
+commit;
+end if;
+end;
+/
+
+
+
+
+
+
