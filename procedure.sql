@@ -222,9 +222,15 @@ call insert_into_traininfo(2020,'11-Sep-21',23,1999);
 
 
 
-
-
-
-
-
-select  from mbta_traininfo;
+-- Check constraint - IN Keyword 
+Create or replace procedure insert_into_mbta_station(
+route_id mbta_route.RouteId%type,
+station_name mbta_station.StationName%type,
+latitude mbta_station.latitude%type,
+longitude mbta_station.longitude%type,
+stationzipcode mbta_station.stationZipCode%type,
+stationstatus mbta_station.stationStation%type
+)
+as
+begin
+insert into mbta_station values(seq_mbta_station.next,
