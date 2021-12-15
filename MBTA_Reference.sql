@@ -121,7 +121,7 @@ CREATE TABLE mbta_transaction (
 CREATE TABLE mbta_employee (
   EmployeeId Integer NOT NULL,
   DeptId Integer NOT NULL,
-  TrainId Integer NOT NULL,
+  TrainId Integer NULL,
   Name Varchar(50) NOT NULL,
   Age Integer,
   Address Varchar(50) NOT NULL,
@@ -214,4 +214,3 @@ ALTER TABLE mbta_traininfo ADD FOREIGN KEY (EmployeeId) REFERENCES mbta_employee
 
 commit;
 --
-
