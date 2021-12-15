@@ -33,3 +33,8 @@ call insert_into_mbta_station(7,'North Station',02114,42.3664463,-71.0641627,'Y'
 call insert_into_mbta_station(7,'Science Park',02114,42.3668341,-71.0699427,'Y',17,16);
 
 call insert_into_mbta_station(7,'Lechmere',02115,42.370949,-71.07964,'Y',-1,17);
+
+
+
+
+
