@@ -27,18 +27,25 @@ EmpCity IN VARCHAR2,
 EmpState IN VARCHAR2,
 Zip IN NUMBER,
 DateOfJoining IN DATE,
+DeptName IN VARCHAR2,
 GenEmpID OUT NUMBER,
 EmpExists OUT NUMBER
 )
-AS
+IS
+    deptId NUMBER := 0;
+    invalidDeptEx EXCEPTION;
 BEGIN
     SELECT COUNT(1) INTO EmpExists FROM MBTA_EMPLOYEE WHERE EmployeeID = EmpId;
+    SELECT MIN(NVL(DEPTID, 0)) INTO deptId FROM MBTA_DEPT WHERE ROLE = DeptName;
+    IF deptId IS NULL OR deptId <= 0
+    THEN 
+        RAISE invalidDeptEx;
+    END IF;
     IF NVL(EmpExists, 0) > 0
     THEN
         UPDATE MBTA_EMPLOYEE 
         SET 
             DEPTID = DEPTID, 
-            TRAINID = TRAINID, 
             NAME = NVL(EmpName, NAME), 
             AGE = NVL(EmpAge, AGE), 
             Address = NVL(Addr, Address), 
@@ -49,11 +56,13 @@ BEGIN
         WHERE EmployeeID = EmpId
         RETURNING EmployeeID INTO GenEmpID;
     ELSE
-        INSERT INTO MBTA_EMPLOYEE VALUES (EmpId, 1, 1, EmpName, EmpAge, Addr, EmpCity, EmpState, Zip, DateOfJoining)
+        INSERT INTO MBTA_EMPLOYEE VALUES (EmpId, deptId, NULL, EmpName, EmpAge, Addr, EmpCity, EmpState, Zip, DateOfJoining)
         RETURNING EmployeeID INTO GenEmpID;
     END IF;
     COMMIT;
 EXCEPTION
+    WHEN invalidDeptEx THEN 
+        DBMS_OUTPUT.PUT_LINE('Error: Department does not exist. No updates were made.');
     WHEN OTHERS THEN
         ROLLBACK;
 END mbta_CreateOrUpdateEmployeeProfile;
