@@ -265,6 +265,27 @@ call insert_into_mbta_station(7,'Lechmere',02115,42.370949,-71.07964,'Y',-1,17);
 -- Get Route
 
 
+SET SERVEROUTPUT ON;
+create or replace procedure get_miles(from_station mbta_station.stationname%type,to_station mbta_station.stationname%type)
+as
+lat1 number(20,18);
+lat2 number(20,18);
+long1 number(20,18);
+long2 number(20,18);
+dist number(8,6);
+begin 
+select latitude,longitude into lat1,long1 from mbta_station where stationname=from_station;
+select latitude,longitude into lat2,long2 from mbta_station where stationname=to_station;
+ select distance(lat1,long1,lat2,long2) into dist from dual;
+dbms_output.put_line('Distance from ' || from_station || ' to ' || to_station || ' is ' ||dist ||' kms'); 
+dist:=dist*0.621371;
+dbms_output.put_line('Distance from '|| from_station || ' to '|| to_station || ' is ' || dist || ' miles'); 
+
+end;
+/
+
+
+call get_miles('Copley','Government Center');
 
 
 
