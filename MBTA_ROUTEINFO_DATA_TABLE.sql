@@ -7,3 +7,6 @@ Insert into ADMIN.MBTA_ROUTEINFO (ROUTEID,TYPEID,ROUTE_FROM,ROUTE_TO,DURATION) v
 Insert into ADMIN.MBTA_ROUTEINFO (ROUTEID,TYPEID,ROUTE_FROM,ROUTE_TO,DURATION) values (5,4,'Cleveland Circle','Lechmere',45);
 Insert into ADMIN.MBTA_ROUTEINFO (ROUTEID,TYPEID,ROUTE_FROM,ROUTE_TO,DURATION) values (6,5,'Riverside','Lechmere',45);
 Insert into ADMIN.MBTA_ROUTEINFO (ROUTEID,TYPEID,ROUTE_FROM,ROUTE_TO,DURATION) values (7,6,'Heath Street','Lechmere',45);
+
+
+select * from mbta_routeinfo;
