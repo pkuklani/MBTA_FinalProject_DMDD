@@ -266,9 +266,6 @@ call insert_into_mbta_station(7,'Lechmere',02115,42.370949,-71.07964,'Y',-1,17);
 
 
 
-select * from mbta_passengerfrequency;
-
-
 
 
 
