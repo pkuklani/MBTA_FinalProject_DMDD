@@ -291,7 +291,7 @@ call get_miles('Copley','Government Center');
 
 -----------------------Next Station-------------------------
 set serveroutput on;
-create or replace procedure get_next_station(current mbta_station.stationname%type,to_s mbta_station.stationname%type)
+create or replace procedure get_next_station(current_s mbta_station.stationname%type,to_s mbta_station.stationname%type)
 as
 currentseq number;
 currentpseq number;
@@ -299,20 +299,35 @@ toseq number;
 topseq number;
 stationans varchar(50);
 begin
-select stationseq,prevseq into currentseq,currentpseq from mbta_station where stationname='Copley';
-select stationseq,prevseq into toseq,topseq from mbta_station where stationname='Haymarket';
-if(currentseq>toseq) then
+select stationseq,prevseq into currentseq,currentpseq from mbta_station where stationname=current_s;
+select stationseq,prevseq into toseq,topseq from mbta_station where stationname=to_s;
+dbms_output.put_line(currentseq);
+dbms_output.put_line(toseq);
+if(currentseq=toseq)then
+dbms_output.put_line('This is last station of the route');
+
+elsif(currentseq=-1)  then
+select stationname into stationans from mbta_station where stationseq=currentpseq;
+dbms_output.put_line(stationans);
+
+elsif(currentseq>toseq) then
 select stationname into stationans from mbta_station where stationseq=currentseq-1;
 dbms_output.put_line(stationans);
 elsif(currentseq<toseq) then
-select stationname into stationans from mbta_station where stationseq=currentseq;
+select stationname into stationans from mbta_station where stationseq=currentseq+1;
 dbms_output.put_line(stationans);
-
 end if;
 end;
 /
 
-call get_next_station('Prudential','North Station');
 
+call get_next_station('Copley','Mission Park');
+
+call get_next_station('Mission Park','Copley');
+
+call get_next_station('Heath Street','Heath Street');
+
+
+call get_next_station('Lechmere','Lechmere');
 
 select * from mbta_station;
