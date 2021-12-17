@@ -289,4 +289,30 @@ call get_miles('Copley','Government Center');
 
 
 
+-----------------------Next Station-------------------------
+set serveroutput on;
+create or replace procedure get_next_station(current mbta_station.stationname%type,to_s mbta_station.stationname%type)
+as
+currentseq number;
+currentpseq number;
+toseq number;
+topseq number;
+stationans varchar(50);
+begin
+select stationseq,prevseq into currentseq,currentpseq from mbta_station where stationname='Copley';
+select stationseq,prevseq into toseq,topseq from mbta_station where stationname='Haymarket';
+if(currentseq>toseq) then
+select stationname into stationans from mbta_station where stationseq=currentseq-1;
+dbms_output.put_line(stationans);
+elsif(currentseq<toseq) then
+select stationname into stationans from mbta_station where stationseq=currentseq;
+dbms_output.put_line(stationans);
 
+end if;
+end;
+/
+
+call get_next_station('Prudential','North Station');
+
+
+select * from mbta_station;
