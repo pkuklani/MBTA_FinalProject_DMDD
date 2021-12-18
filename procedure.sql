@@ -301,21 +301,15 @@ stationans varchar(50);
 begin
 select stationseq,prevseq into currentseq,currentpseq from mbta_station where stationname=current_s;
 select stationseq,prevseq into toseq,topseq from mbta_station where stationname=to_s;
-dbms_output.put_line(currentseq);
-dbms_output.put_line(toseq);
+
 if(currentseq=toseq)then
 dbms_output.put_line('This is last station of the route');
-
-elsif(currentseq=-1)  then
-select stationname into stationans from mbta_station where stationseq=currentpseq;
-dbms_output.put_line(stationans);
-
 elsif(currentseq>toseq) then
 select stationname into stationans from mbta_station where stationseq=currentseq-1;
-dbms_output.put_line(stationans);
+dbms_output.put_line('Next Station '||stationans);
 elsif(currentseq<toseq) then
 select stationname into stationans from mbta_station where stationseq=currentseq+1;
-dbms_output.put_line(stationans);
+dbms_output.put_line('Next Station '||stationans);
 end if;
 end;
 /
@@ -327,7 +321,117 @@ call get_next_station('Mission Park','Copley');
 
 call get_next_station('Heath Street','Heath Street');
 
-
 call get_next_station('Lechmere','Lechmere');
 
-select * from mbta_station;
+
+
+
+------------------GET WHOLE ROUTE-------------
+
+set serveroutput on;
+
+create or replace procedure get_route(from_s mbta_station.stationname%type,to_s mbta_station.stationname%type)
+as
+currentseq number;
+currentpseq number;
+toseq number;
+topseq number;
+stationans varchar(50); 
+begin
+select stationseq,prevseq into currentseq,currentpseq from mbta_station where stationname=from_s;
+select stationseq,prevseq into toseq,topseq from mbta_station where stationname=to_s;
+if(currentseq=toseq)then
+dbms_output.put_line('This is last station of the route');
+
+-- Lechmere To heath Street
+elsif(currentseq=-1)then
+select count(*) into currentseq from mbta_station where routeid=(select routeid from mbta_station where stationname=from_s);
+for a in toseq .. currentseq-1 loop
+currentseq:=currentseq-1;
+select stationname into stationans from mbta_station where stationseq=currentseq;
+dbms_output.put_line(stationans);
+end loop;
+
+
+-- Heath Street to lechmere
+elsif(currentpseq=0)then
+
+select count(*) into toseq from mbta_station where routeid=(select routeid from mbta_station where stationname=from_s);
+for a in currentseq .. toseq loop
+if (currentseq=18) then
+select stationname into stationans from mbta_station where stationseq=-1;
+dbms_output.put_line(stationans);
+else
+select stationname into stationans from mbta_station where stationseq=currentseq;
+currentseq:=currentseq+1;
+dbms_output.put_line(stationans);
+end if;
+end loop;
+
+
+elsif(currentseq>toseq) then
+for a in toseq .. currentseq loop
+select stationname into stationans from mbta_station where stationseq=currentseq;
+currentseq:=currentseq-1;
+dbms_output.put_line(stationans);
+end loop;
+elsif(currentseq<toseq) then
+for a in currentseq .. toseq loop
+select stationname into stationans from mbta_station where stationseq=currentseq;
+currentseq:=currentseq+1;
+dbms_output.put_line(stationans);
+end loop;
+end if;
+end;
+/
+
+call get_route('Copley','Mission Park');
+
+call get_route('Mission Park','Copley');
+
+call get_route('Heath Street','Heath Street');
+
+call get_route('Lechmere','Lechmere');
+
+call get_route('Heath Street','Lechmere');
+
+call get_route('Lechmere','Heath Street');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+declare
+stationans varchar(50);
+froms number:=1;
+tos number:=10;
+stationseq_counter number:=1;
+begin
+
+for a in froms .. tos loop
+select stationname into stationans from mbta_station where stationseq=stationseq_counter;
+stationseq_counter:=stationseq_counter+1;
+dbms_output.put_line('Next Station '||stationans);
+
+end loop;
+dbms_output.put_line('Done');
+
+stationseq_counter:=10;
+for a in froms .. tos loop
+select stationname into stationans from mbta_station where stationseq=stationseq_counter;
+stationseq_counter:=stationseq_counter-1;
+dbms_output.put_line('Next Station '||stationans);
+end loop;
+end;
+/
