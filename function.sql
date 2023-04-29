@@ -45,9 +45,9 @@ check_year int;
 begin
 select extract(year from to_date(lastservicedate_in,'DD-MON-YY')) into check_year from dual;
 if(check_year>yearofmanu_in)then
-dbms_output.put_line('Not valid year');
 return 1;
 else
+dbms_output.put_line('Not valid year');
 return 0;
 end if;
 end check_service_manu;
@@ -89,23 +89,3 @@ BEGIN
         (COS(NVL(Lat1,0) / DegToRad) * COS(NVL(Lat2,0) / DegToRad) *
          COS(NVL(Lon2,0) / DegToRad - NVL(Lon1,0)/ DegToRad))));
 END;
-
-
------ check next train
-
---create or replace function check_next_train_for_route(route_id in mbta_schedule.routeid%type, start_time in mbta_schedule.traintime%type)
---return int 
---is next_train_id INT;
---begin
-
---select TRAINID into next_train_id from mbta_schedule where traintime > start_time and route_id=routeid and trainid in(select max(trainid) from mbta_schedule);
-
---return next_train_id;
-
---end check_next_train_for_route;
-
-
---select check_next_train_for_route(2,to_char(systimestamp,'HH:MM:SS')) from dual;
-
---desc mbta_schedule;
-

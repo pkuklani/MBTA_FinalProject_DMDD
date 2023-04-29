@@ -51,13 +51,12 @@ end;
 /*  WRONG TRAIN ID*/
 call insert_into_mbta_traincurrentstatus(23.34,34.54,500);
 
-/* Null input */
-call insert_into_mbta_traincurrentstatus(23.34,null,500);
+/* Null input Longitude */
+call insert_into_mbta_traincurrentstatus(23.34,null,28);
 
 
-call insert_into_mbta_traincurrentstatus(23.34,null,500);
 
-
+call insert_into_mbta_traincurrentstatus(23.34,34.54,28);
 /* Procedure to insert Scehdule of the train 
 
 Used max to get last schedule id not Sequence
@@ -204,9 +203,10 @@ end;
 /
 
 
-
+---valid use case
 call insert_into_traininfo(2020,'11-Sep-21',23,93);
 
+--invalid
 call insert_into_traininfo(2022,'11-Sep-21',23,93);
 
 call insert_into_traininfo(null,'11-Sep-21',23,93);
@@ -218,6 +218,7 @@ call insert_into_traininfo(2022,'11-Sep-21',null,93);
 call insert_into_traininfo(2020,'11-Sep-21',23,null);
 
 call insert_into_traininfo(2020,'11-Sep-21',23,1999);
+
 
 
 
@@ -256,11 +257,16 @@ else
 insert into mbta_station values(seq_mbta_station.nextval,route_id,station_name,latitude,longitude,stationzipcode,stationstatus,stationseq,prevstationseq);
 commit;
 end if;
+exception when 
+null_routeid then
+    raise_application_error(-20001,'Invalid Route Id');
+
 end;
 /
 
 call insert_into_mbta_station(7,'Lechmere',02115,42.370949,-71.07964,'Y',-1,17);
 
+call insert_into_mbta_station(null,'Lechmere',null,42.370949,-71.07964,'Y',-1,17);
 
 -- Get Route
 
@@ -290,6 +296,9 @@ call get_miles('Copley','Government Center');
 
 
 -----------------------Next Station-------------------------
+
+
+select * from mbta_station;
 set serveroutput on;
 create or replace procedure get_next_station(current_s mbta_station.stationname%type,to_s mbta_station.stationname%type)
 as
@@ -327,6 +336,8 @@ call get_next_station('Lechmere','Lechmere');
 
 
 ------------------GET WHOLE ROUTE-------------
+
+
 
 set serveroutput on;
 
@@ -398,3 +409,7 @@ call get_route('Heath Street','Lechmere');
 call get_route('Lechmere','Heath Street');
 
 
+select * from mbta_passengerfrequency
+
+
+select avgsec
